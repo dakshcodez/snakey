@@ -64,15 +64,32 @@ func (g *Game) moveSnake() {
 	g.snake = g.snake[:len(g.snake)-1]
 }
 
+func (g *Game) Reset() {
+    g.snake = []Point{{5, 5}, {4, 5}, {3, 5}}
+    g.direction = Right
+    g.food = SpawnFood(g.snake)
+    g.gameover = false
+    g.tick = 0
+}
+
 func(g *Game) Update() error {
 	if g.gameover {
+		if inpututil.IsKeyJustPressed(ebiten.KeyR) {
+			g.gameover = false
+			g.Reset()
+		}
+
+		if inpututil.IsKeyJustPressed(ebiten.KeyQ) || inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
+			return ebiten.Termination
+		}
+
 		return nil
 	}
 
 	HandleInput(g)
 
 	g.tick++
-	if g.tick%8 != 0 {
+	if g.tick%6 != 0 {
 		return nil
 	}
 
