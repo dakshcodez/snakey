@@ -2,11 +2,6 @@ package main
 
 import (
 	"math/rand"
-	//"image/color"
-
-	// "github.com/hajimehoshi/ebiten/v2"
-	// "github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	// "github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 func SpawnFood(snake []Point) Point {
@@ -28,4 +23,9 @@ func SpawnFood(snake []Point) Point {
 			return p
 		}
 	}
+}
+
+func GrowSnake(g *Game) {
+	tail := g.snake[len(g.snake) - 1]
+	g.snake = append(g.snake, tail)
 }

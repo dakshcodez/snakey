@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -9,9 +10,18 @@ import (
 )
 
 const (
-	sWidth = 1000
-	sHeight = 800
+	sWidth = 640
+	sHeight = 480
 	cellSize = 20
+)
+
+type Direction int
+
+const (
+	Up Direction = iota
+	Down
+	Left
+	Right
 )
 
 type Point struct {
@@ -21,27 +31,64 @@ type Point struct {
 
 type Game struct {
 	snake []Point
+	direction Direction
 	food Point
+	gameover bool
+	tick int
 }
 
 func NewGame() *Game {
 	g := &Game{
 		snake : []Point{{5,5}, {4,5}, {3,5}},
+		direction: Right,
 	}
 	g.food = SpawnFood(g.snake)
 	return g
 }
 
+func (g *Game) moveSnake() {
+	head := g.snake[0]
+
+	switch g.direction {
+	case Up:
+		head.Y--
+	case Down:
+		head.Y++
+	case Left:
+		head.X--
+	case Right:
+		head.X++
+	}
+
+	g.snake = append([]Point{head}, g.snake...)
+	g.snake = g.snake[:len(g.snake)-1]
+}
+
 func(g *Game) Update() error {
+	if g.gameover {
+		return nil
+	}
+
+	HandleInput(g)
+
+	g.tick++
+	if g.tick%8 != 0 {
+		return nil
+	}
+
+	g.moveSnake()
+	CheckCollision(g)
+
 	if inpututil.IsKeyJustPressed(ebiten.KeyQ) || inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
 		return ebiten.Termination
 	}
+	fmt.Println("Tick:", g.tick, "Head:", g.snake[0], "GameOver:", g.gameover)
+
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black)
-
 
 	// snake
 	for _, s := range g.snake {
