@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func CheckCollision(g *Game) {
 	head := g.snake[0]
 
@@ -20,5 +22,7 @@ func CheckCollision(g *Game) {
 	if head == g.food {
 		GrowSnake(g)
 		g.food = SpawnFood(g.snake)
+		g.point++
+		fmt.Println("Points:", g.point)
 	}
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -35,12 +35,14 @@ type Game struct {
 	food Point
 	gameover bool
 	tick int
+	point int
 }
 
 func NewGame() *Game {
 	g := &Game{
 		snake : []Point{{5,5}, {4,5}, {3,5}},
 		direction: Right,
+		point : 0,
 	}
 	g.food = SpawnFood(g.snake)
 	return g
@@ -70,6 +72,7 @@ func (g *Game) Reset() {
     g.food = SpawnFood(g.snake)
     g.gameover = false
     g.tick = 0
+	g.point = 0
 }
 
 func(g *Game) Update() error {
@@ -79,7 +82,7 @@ func(g *Game) Update() error {
 			g.Reset()
 		}
 
-		if inpututil.IsKeyJustPressed(ebiten.KeyQ) || inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
+		if ebiten.IsKeyPressed(ebiten.KeyQ) || ebiten.IsKeyPressed(ebiten.KeyEscape) {
 			return ebiten.Termination
 		}
 
@@ -89,17 +92,17 @@ func(g *Game) Update() error {
 	HandleInput(g)
 
 	g.tick++
-	if g.tick%6 != 0 {
+	if g.tick%8 != 0 {
 		return nil
 	}
 
 	g.moveSnake()
 	CheckCollision(g)
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyQ) || inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
-		return ebiten.Termination
-	}
-	fmt.Println("Tick:", g.tick, "Head:", g.snake[0], "GameOver:", g.gameover)
+	if ebiten.IsKeyPressed(ebiten.KeyQ) || ebiten.IsKeyPressed(ebiten.KeyEscape) {
+			return ebiten.Termination
+		}
+	//fmt.Println("Tick:", g.tick, "Head:", g.snake[0], "GameOver:", g.gameover)
 
 	return nil
 }
